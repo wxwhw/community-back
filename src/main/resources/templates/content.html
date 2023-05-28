@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<div class="container p-0" th:fragment="content">
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <left>
+                <!-- 轮播图 -->
+                <div id="carouselExampleCaptions" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0"
+                                class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                                aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                                aria-label="Slide 3"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="/imgs/001.jpg" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>文章标题文章标题文章标题</h5>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="/imgs/002.jpg" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>文章标题文章标题文章标题</h5>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="/imgs/003.jpg" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>文章标题文章标题文章标题</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <!-- 帖子列表开始 -->
+                <div class="post-list">
+                    <div class="post-item">
+                        <div class="row">
+                            <div class="post-info col-8 col-sm-8 col-xl-9 p-0">
+                                <div class="post-title">
+                                    <a href="https://www.baidu.com" target="_blank">
+                                        <h3>标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题</h3>
+                                    </a>
+                                </div>
+                                <div class="post-desc">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad rem quis
+                                        accusamus illo, voluptates eveniet cupiditate cum magnam saepe, laudantium
+                                        eligendi incidunt culpa tenetur esse temporibus alias ab deserunt unde?</p>
+                                </div>
+                                <div class="post-data">
+                                    <small class="author-info">
+                                        <a href="#">
+                                            <img class="avatar" src="/imgs/face.jpg" alt="">
+                                            <span class="name">房东的猫</span>
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="post-image col-4 col-sm-4 col-xl-3 p-0">
+                                <div class="img"><img src="../imgs/003.jpg" alt="封面"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- 帖子列表结束 -->
+                <!-- 分页开始 -->
+                <nav class="pagination-box" aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center m-0">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- 分页结束 -->
+            </left>
+        </div>
+
+
+        <div class="col-sm-0 col-md-4">
+            <right>
+                <!-- 写文章/提问题 -->
+                <div class="card">
+                    <div class="card-body" style="display: flex;justify-content: space-around;">
+                        <a href="http://localhost:8080/editor" target="_blank" class="btn btn-primary border-0">写文章</a>
+                        <a href="#" target="_blank" class="btn btn-outline-primary">提问题</a>
+                    </div>
+                </div>
+
+                <!-- 公告栏 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>公告</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="announcement row p-0">
+                            <div class="an-title col-9 p-0">
+                                <a class="text-decoration-none link-dark" href="#">公告标题</a>
+                            </div>
+                            <div class="an-time col-3 p-0">
+                                <p>2022-12-13</p>
+                            </div>
+                        </div>
+
+                        <div class="announcement row p-0">
+                            <div class="an-title col-9 p-0">
+                                <a class="text-decoration-none link-dark" href="#">公告标题</a>
+                            </div>
+                            <div class="an-time col-3 p-0">
+                                <p>2022-12-13</p>
+                            </div>
+                        </div>
+
+                        <div class="announcement row p-0">
+                            <div class="an-title col-9 p-0">
+                                <a class="text-decoration-none link-dark" href="#">公告标题</a>
+                            </div>
+                            <div class="an-time col-3 p-0">
+                                <p>2022-12-13</p>
+                            </div>
+                        </div>
+
+                        <div class="announcement row p-0">
+                            <div class="an-title col-9 p-0">
+                                <a class="text-decoration-none link-dark" href="#">公告标题</a>
+                            </div>
+                            <div class="an-time col-3 p-0">
+                                <p>2022-12-13</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 常见问题 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span>常见问题</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="announcement row p-0">
+                            <div class="an-title col-9 p-0">
+                                <a class="text-decoration-none link-dark" href="#">公告标题</a>
+                            </div>
+                            <div class="an-time col-3 p-0">
+                                <p>2022-12-13</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 标签云 -->
+                <div class="card tag-group">
+                    <div class="card-header">
+                        <span>常用标签</span>
+                    </div>
+                    <div class="card-body">
+                        <a href="#">英雄联盟</a>
+                        <a href="#">使命召唤：现代战争Ⅱ2022丨战争地带2.0</a>
+                        <a href="#">守望先锋</a>
+                        <a href="#">盗贼之海</a>
+                        <a href="#">侠盗猎车手5</a>
+                        <a href="#">CS:GO</a>
+                        <a href="#">绝地求生</a>
+                        <a href="#">Apex英雄</a>
+                        <a href="#">赛博朋克2077</a>
+
+                    </div>
+                </div>
+
+            </right>
+        </div>
+    </div>
+</div>
+
+</html>

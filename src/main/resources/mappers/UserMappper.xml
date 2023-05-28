@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.majiang.community.mapper.UserMapper">
+
+    <sql id="User_Column_List">
+        id
+        ,email,nickname,password,role,state,gender,avatar,signature,last_login_time,is_delete,create_at,update_at
+    </sql>
+
+    <insert id="insertUser" parameterType="com.majiang.community.pojo.User">
+        insert into t_user
+        (email,nickname,password,role,state,
+        <if test="gender != null and gender !=''">
+            gender,
+        </if>
+        <if test="signature != null and signature !=''">
+            signature,
+        </if>
+        <if test="avatar != null and avatar !=''">
+            avatar,
+        </if>
+        is_delete,create_at,update_at)
+        values
+        (#{email},#{nickname},#{password},#{role},#{state},
+        <if test="gender != null and gender !=''">
+            #{gender},
+        </if>
+        <if test="signature != null and signature !=''">
+            #{signature},
+        </if>
+        <if test="avatar != null and avatar !=''">
+            #{avatar},
+        </if>
+        #{isDelete},#{createAt},#{updateAt})
+    </insert>
+
+    <select id="selectUserByEmail" parameterType="string" resultType="com.majiang.community.pojo.User">
+        select
+        <include refid="User_Column_List"/>
+        from
+        t_user
+        where
+        email =#{email}
+    </select>
+
+    <select id="selectUserByName" parameterType="string" resultType="com.majiang.community.pojo.User">
+        select
+        <include refid="User_Column_List"></include>
+        from
+        t_user
+        where
+        nickname = #{nickname}
+    </select>
+
+    <select id="selectUserByToken" parameterType="string" resultMap="TokenMap">
+        select *
+        from t_user_token
+        where token = #{token}
+    </select>
+
+    <resultMap id="TokenMap" type="com.majiang.community.pojo.UserToken">
+        <id property="id" column="id"></id>
+        <result property="token" column="token"></result>
+        <association property="user" column="user_id" javaType="com.majiang.community.pojo.User"
+                     select="selectUserById"></association>
+    </resultMap>
+
+    <select id="selectUserById" resultType="com.majiang.community.pojo.User">
+        select *
+        from t_user
+        where is_delete = 0 and id = #{id}
+    </select>
+
+    <insert id="insertToken" parameterType="com.majiang.community.pojo.UserToken">
+        insert into t_user_token (token, user_id)
+        values (#{token}, #{userId})
+    </insert>
+
+    <update id="updateUser" parameterType="com.majiang.community.pojo.User">
+        update
+        t_user
+        <set>
+            <if test="email != null and email !=''">
+                email = #{email},
+            </if>
+            <if test="nickname != null and nickname !=''">
+                nickname = #{nickname},
+            </if>
+            <if test="role != null and role !=''">
+                role = #{role},
+            </if>
+            <if test="state != null and state !=''">
+                state = #{state},
+            </if>
+            <if test="gender != null and gender !=''">
+                gender = #{gender},
+            </if>
+            <if test="signature != null and signature !=''">
+                signature = #{signature},
+            </if>
+            <if test="avatar != null and avatar !=''">
+                avatar = #{avatar},
+            </if>
+            <if test="updateAt != null">
+                update_at = #{updateAt},
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time = #{lastLoginTime}
+            </if>
+        </set>
+        where
+        id = #{id}
+    </update>
+
+    <!--多条件模糊查询-->
+    <select id="selectPage" resultType="com.majiang.community.pojo.User">
+        select * from t_user
+        where
+        is_delete = 0
+        <if test="searchname != null and searchname != ''">
+            and nickname like concat('%', #{searchname}, '%')
+        </if>
+        <if test="email != null and email != ''">
+            and email like concat('%', #{email}, '%')
+        </if>
+        <if test="role != null and role != ''">
+            and role = #{role}
+        </if>
+        <if test="state != null and state != ''">
+            and state = #{state}
+        </if>
+        limit
+        #{i},#{pageSize}
+    </select>
+
+    <select id="selectTotal" resultType="Long">
+        select count(id) from t_user
+        where
+        is_delete = 0
+        <if test="searchname != null and searchname != ''">
+            and nickname like concat('%', #{searchname}, '%')
+        </if>
+        <if test="email != null and email != ''">
+            and email like concat('%', #{email}, '%')
+        </if>
+        <if test="role != null and role != ''">
+            and role = #{role}
+        </if>
+        <if test="state != null and state != ''">
+            and state = #{state}
+        </if>
+    </select>
+
+    <select id="selectSearchUser" resultType="com.majiang.community.dto.SearchUserDTO">
+        select id,nickname,avatar,signature from t_user where is_delete = 0 and nickname like concat('%', #{searchText}, '%') limit #{offset},#{pageSize}
+    </select>
+</mapper>

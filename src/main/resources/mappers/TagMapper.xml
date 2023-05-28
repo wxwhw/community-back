@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.majiang.community.mapper.TagMapper">
+    <sql id="Tag_Column_List">
+        id,name,description,group_name,audit_state,ref_count,creator_id,is_delete,create_at,update_at
+    </sql>
+
+    <insert id="insertTag" parameterType="com.majiang.community.pojo.Tag">
+        insert into t_tag(name,group_name,audit_state,description,ref_count,creator_id,is_delete,create_at,update_at)
+        values (#{name},#{groupName},#{auditState},#{description},#{refCount},#{creatorId},#{isDelete},#{createAt},#{updateAt})
+    </insert>
+
+    <!--多条件模糊查询-->
+    <select id="selectPage" resultType="com.majiang.community.pojo.Tag">
+        select * from t_tag
+        where
+        is_delete = 0
+        <if test="name != null and name != ''">
+            and name like concat('%', #{name}, '%')
+        </if>
+        <if test="group != null and group != ''">
+            and group_name like concat('%', #{group}, '%')
+        </if>
+        <if test="auditState != null and auditState != ''">
+            and audit_state = #{auditState}
+        </if>
+        limit
+        #{i},#{pageSize}
+    </select>
+
+    <select id="selectTotal" resultType="Long">
+        select count(*) from t_tag
+        where
+        is_delete = 0
+        <if test="name != null and name != ''">
+            and name like concat('%', #{name}, '%')
+        </if>
+        <if test="group != null and group != ''">
+            and group_name like concat('%', #{group}, '%')
+        </if>
+        <if test="auditState != null and auditState != ''">
+            and audit_state = #{auditState}
+        </if>
+    </select>
+
+
+    <select id="getGroups" resultMap="groupMap">
+        select id,group_name,name,description,ref_count from t_tag where audit_state = 'PASS' and is_delete = 0 order by ref_count desc
+    </select>
+
+    <resultMap id="groupMap" type="com.majiang.community.dto.Group">
+        <id column="group_name" property="groupName"/>
+        <collection property="tagGroup" ofType="com.majiang.community.dto.TagDTO" resultMap="tagMap"/>
+    </resultMap>
+
+    <resultMap id="tagMap" type="com.majiang.community.dto.TagDTO">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="description" property="description"></result>
+        <result column="group_name" property="groupName"></result>
+        <result column="ref_count" property="refCount"></result>
+    </resultMap>
+</mapper>

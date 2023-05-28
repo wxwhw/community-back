@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<nav class="navbar navbar-expand-md bg-light navbar-light mb-3" th:fragment="header">
+    <div class="container">
+        <a href="#" class="navbar-brand">
+            <img src="/imgs/cat.png" width="40" height="40" alt="logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">SakuraCat</a>
+                </li>
+                <li class="navbar-item">
+                    <a href="#" class="nav-link">动态</a>
+                </li>
+                <li class="navbar-item">
+                    <a href="#" class="nav-link">关于</a>
+                </li>
+            </ul>
+            <form class="d-flex me-4" role="search">
+                <input class="form-control" type="search" placeholder="Search..." aria-label="Search">
+            </form>
+
+
+            <!-- 登录模态框 -->
+            <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+                    <div class="modal-content rounded-4 shadow">
+                        <div class="modal-header p-5 pb-4 border-bottom-0">
+                            <h1 class="fw-bold mb-0 fs-2" id="loginModalLabel">邮箱登录</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-5 pt-0 pb-0">
+                            <form onsubmit="return false;">
+                                <div class="form-floating mt-1 mb-3">
+                                    <input type="email" class="form-control rounded-3" id="loginEmail"
+                                           placeholder="name@example.com">
+                                    <label for="loginEmail">请输入邮箱</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control rounded-3" id="loginPassword"
+                                           placeholder="Password">
+                                    <label for="loginPassword">请输入密码</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">记住我</label>
+                                </div>
+
+                                <button id="login" class="w-100 mb-3 btn btn-lg rounded-3 btn-dark"
+                                        type="submit">登录
+                                </button>
+                                <!-- <button class="w-100 mb-2 btn btn-lg rounded-3 btn-light"
+                                    data-bs-target="#signupModal" data-bs-toggle="modal">注册</button> -->
+                            </form>
+                        </div>
+                        <div class="modal-footer border-top-0 px-5 pt-0">
+                            <button class="w-100 m-0 btn btn-lg rounded-3 btn-light"
+                                    data-bs-target="#signupModal" data-bs-toggle="modal">注册
+                            </button>
+
+                            <!-- <hr class="my-4"> -->
+                            <!-- <p class="fw-bold mb-3">使用第三方登录</p>
+                            <a href="">
+                                <img src="../imgs/github.svg" alt="" width="25" height="25">
+                            </a> -->
+                        </div>
+                        <div class="modal-footer third-oauth-login-box p-5 pt-0 border-top-0">
+                            <a href="https://github.com/login/oauth/authorize?client_id=7d66ee207fc9e6bc3068&redirect_uri=http://localhost:9505/callback&state=1">
+                                <img src="/imgs/github.svg" alt="github登录" width="40" height="40">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--注册模态框-->
+            <div class="modal fade" id="signupModal" aria-hidden="true" aria-labelledby="signupModalLabel"
+                 tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+                    <div class="modal-content">
+                        <div class="modal-header p-5 pb-4 border-bottom-0">
+                            <h1 class="modal-title fw-bold mb-0 fs-2" id="signupModalLabel">邮箱注册</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-5 pt-0 pb-0">
+                            <form onsubmit="return false;">
+                                <div class="form-floating mt-1 mb-3">
+                                    <input type="email" class="form-control rounded-3" id="signupEmail"
+                                           placeholder="name@example.com">
+                                    <label for="signupEmail">邮箱账号</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control rounded-3" id="nickName"
+                                           placeholder="mike">
+                                    <label for="nickName">给自己起个名字呗</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control rounded-3" id="signupPassword"
+                                           placeholder="Password">
+                                    <label for="signupPassword">输入密码</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control rounded-3" id="checkPassword"
+                                           placeholder="Password">
+                                    <label for="checkPassword">确认密码</label>
+                                </div>
+
+                                <button id="registry" class="w-100 mt-1 mb-3 btn btn-lg rounded-3 btn-dark"
+                                        type="submit">注册并登录
+                                </button>
+                            </form>
+                        </div>
+                        <div class="modal-footer border-top-0 p-5 pt-0">
+                            <button id="toLogin" class="w-100 m-0 mb-3 btn btn-lg rounded-3 btn-light"
+                                    data-bs-target="#loginModal"
+                                    data-bs-toggle="modal">去登录
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button th:if="${session.user == null}" type="button" class="btn btn-dark" data-bs-toggle="modal"
+                    data-bs-target="#loginModal">登录/注册
+            </button>
+
+            <div class="dropdown py-2" th:if="${session.user!=null}">
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    <img src="https://sdn.geekzu.org/avatar/2dc2307f3d5d378084191391c8e6d03b?d=retro" alt="mdo" width="32" height="32" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu text-small">
+                    <li><a class="dropdown-item" href="#">我的主页</a></li>
+                    <li><a class="dropdown-item" href="#">设置</a></li>
+                    <li><a class="dropdown-item" href="#">修改密码</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#">退出</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+</html>

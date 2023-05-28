@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.majiang.community.mapper.CommentMapper">
+
+    <resultMap id="commentMap" type="com.majiang.community.pojo.Comment">
+        <id column="id" property="id"></id>
+        <result column="root_id" property="rootId"></result>
+        <result column="post_id" property="postId"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="to_user_id" property="toUserId"></result>
+        <result column="content" property="content"></result>
+        <result column="create_at" property="createAt"></result>
+        <result column="update_at" property="updateAt"></result>
+        <association property="user" javaType="com.majiang.community.dto.UserDTO">
+            <id property="id" column="u_id"></id>
+            <result property="nickname" column="u_nickname"></result>
+            <result property="avatar" column="u_avatar"></result>
+        </association>
+        <association property="toUser" javaType="com.majiang.community.dto.UserDTO">
+            <id property="id" column="t_u_id"></id>
+            <result property="nickname" column="t_u_nickname"></result>
+            <result property="avatar" column="t_u_avatar"></result>
+        </association>
+        <collection property="subComList" ofType="com.majiang.community.pojo.Comment" select="selectSubComByRootId"
+                    column="id">
+        </collection>
+    </resultMap>
+
+    <sql id="comment_column">
+        t_comments
+        .
+        id
+        ,
+        root_id,
+        post_id,
+        user_id,
+        to_user_id,
+        content,
+        t_comments.create_at,
+        t_comments.update_at,
+        users.id u_id,
+        users.nickname u_nickname,
+        users.avatar u_avatar,
+        target_user.id AS t_u_id,
+        target_user.nickname AS t_u_nickname,
+        target_user.avatar AS t_u_avatar
+    </sql>
+
+    <select id="selectRootComByArticleId" resultMap="commentMap">
+        SELECT
+        <include refid="comment_column"/>
+        FROM t_comments
+        JOIN t_user users ON t_comments.user_id = users.id
+        LEFT JOIN t_user AS target_user ON t_comments.to_user_id = target_user.id
+        WHERE t_comments.post_id = #{articleId}
+        AND t_comments.root_id IS NULL and t_comments.is_delete = 0
+    </select>
+
+    <select id="selectSubComByRootId" resultMap="commentMap">
+        SELECT
+        <include refid="comment_column"/>
+        FROM t_comments
+        JOIN t_user users ON t_comments.user_id = users.id
+        LEFT JOIN t_user AS target_user ON t_comments.to_user_id = target_user.id
+        WHERE t_comments.root_id = #{rootId} and t_comments.is_delete = 0
+    </select>
+
+    <insert id="insertComment" parameterType="com.majiang.community.dto.CommentDTO">
+        insert into t_comments(user_id, root_id, post_id, content, is_delete, create_at, update_at, to_user_id)
+        values (#{userId}, #{rootId}, #{postId}, #{content}, #{isDelete}, #{createAt}, #{updateAt}, #{toUserId})
+    </insert>
+
+
+    <select id="selectTotal" resultType="Long">
+        select count(*)
+        from t_comments tc
+        left join t_user user on user.id = tc.user_id
+        where tc.is_delete = 0
+        <if test="nickname != null and nickname != ''">
+            and user.nickname like concat('%', #{nickname}, '%')
+        </if>
+        <if test="content != null and content != ''">
+            and tc.content like concat('%', #{content}, '%')
+        </if>
+        <if test="startWith != '' and endWith != ''">
+            and tc.create_at between STR_TO_DATE(#{startWith},'%Y/%c/%d %H:%i:%s') and STR_TO_DATE(#{endWith},'%Y/%c/%d %H:%i:%s')
+        </if>
+    </select>
+
+    <select id="selectAllComments" resultMap="commentPage">
+        select
+        <include refid="comment_page_column"/>
+        from t_comments tc
+        left join t_user user on user.id = tc.user_id
+        where tc.is_delete = 0
+        <if test="nickname != null and nickname != ''">
+            and user.nickname like concat('%', #{nickname}, '%')
+        </if>
+        <if test="content != null and content != ''">
+            and tc.content like concat('%', #{content}, '%')
+        </if>
+        <if test="startWith != '' and endWith != ''">
+            and tc.create_at between STR_TO_DATE(#{startWith},'%Y/%c/%d %H:%i:%s') and STR_TO_DATE(#{endWith},'%Y/%c/%d %H:%i:%s')
+        </if>
+        limit #{offset},#{pageSize}
+    </select>
+
+    <sql id="comment_page_column">
+        tc
+        .
+        id
+        id,
+        user_id,
+        post_id,
+        content,
+        tc.create_at create_at,
+        tc.update_at update_at,
+        USER.id u_id,
+        USER.avatar u_avatar,
+        USER.nickname u_nickname
+    </sql>
+    <resultMap id="commentPage" type="com.majiang.community.dto.CommentPageDTO">
+        <id column="id" property="id"></id>
+        <result column="post_id" property="postId"></result>
+        <result column="content" property="content"></result>
+        <result column="create_at" property="createAt"></result>
+        <result column="update_at" property="updateAt"></result>
+        <result column="update_at" property="updateAt"></result>
+        <association property="user" javaType="com.majiang.community.dto.UserDTO">
+            <id property="id" column="u_id"></id>
+            <result property="nickname" column="u_nickname"></result>
+            <result property="avatar" column="u_avatar"></result>
+        </association>
+    </resultMap>
+</mapper>

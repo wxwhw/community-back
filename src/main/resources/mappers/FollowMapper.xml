@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.majiang.community.mapper.FollowMapper">
+
+
+    <select id="selectUserFollowList" resultType="com.majiang.community.dto.UserDTO">
+        SELECT user.id,
+               nickname,
+               avatar
+        FROM t_user USER LEFT JOIN t_user_follow follow
+        ON USER.id = follow.followed
+        WHERE
+            follow.user_id = #{userId}
+          AND follow.follow_type = "User"
+          and follow.is_delete = 0
+        order by follow.update_at desc
+        limit #{offset},#{pageSize}
+    </select>
+
+
+    <select id="selectFollowNum" resultType="Long">
+        select count(*) from t_user_follow where is_delete = 0
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="followType != null and followType != ''">
+            and follow_type = #{followType}
+        </if>
+    </select>
+
+    <select id="selectFavArticle" resultType="com.majiang.community.pojo.Article">
+        SELECT article.*
+        FROM t_posts article
+                 LEFT JOIN t_user_follow follow ON article.id = follow.followed
+        WHERE follow.is_delete = 0
+          AND article.is_delete = 0
+          AND follow.follow_type = 'Article'
+          AND article.audit_state = 'PASS'
+          and follow.user_id = #{userId}
+        ORDER BY follow.update_at desc
+            limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectUserIsFollowed" resultType="com.majiang.community.pojo.UserFollow">
+        select * from t_user_follow where is_delete = 0 and followed = #{followed} and user_id = #{userId} and follow_type = 'User'
+    </select>
+
+    <select id="selectIsExisted" resultType="com.majiang.community.pojo.UserFollow">
+        select * from t_user_follow where followed = #{followed} and user_id = #{userId} and follow_type = #{followType} and is_delete = 1
+    </select>
+
+    <select id="selectUserFansList" resultType="com.majiang.community.dto.UserDTO">
+        SELECT user.id,
+               nickname,
+               avatar
+        FROM t_user USER LEFT JOIN t_user_follow follow
+        ON USER.id = follow.user_id
+        WHERE
+            follow.followed = #{userId}
+          AND follow.follow_type = "User"
+          and follow.is_delete = 0
+        order by follow.update_at desc
+            limit #{offset},#{pageSize}
+    </select>
+</mapper>

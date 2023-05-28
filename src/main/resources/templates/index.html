@@ -7,71 +7,91 @@
 
     <title>社区名字</title>
     <!--Bootstrap 核心 CSS 文件-->
-    <link rel="stylesheet" href="/css/bootstrap.min.css" >
-
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/message.min.css">
+    <link rel="stylesheet" href="/css/index1.css">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-md bg-light navbar-light">
-    <div class="container">
-        <a href="#" class="navbar-brand">
-            <img src="/imgs/logo-b.svg" width="80" height="40" alt="logo">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<div th:replace="header::header"></div>
+<div th:replace="content::content"></div>
+<div th:replace="footer::footer"></div>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">首页</a>
-                </li>
-                <li class="navbar-item">
-                    <a href="#" class="nav-link">动态</a>
-                </li>
-                <li class="navbar-item">
-                    <a href="#" class="nav-link">关于</a>
-                </li>
-            </ul>
-            <form class="d-flex me-4" role="search">
-                <input class="form-control" type="search" placeholder="Search..." aria-label="Search">
-            </form>
-
-
-            <!-- <a href="#" class="nav-link message-box d-block mt-2 me-4 position-relative text-decoration-none">
-                <img src="../imgs/email.png" width="20" alt="">
-                <span
-                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                    <span class="visually-hidden">未读</span>
-                </span>
-            </a> -->
-
-            <button type="button" class="btn btn-dark">登录</button>
-
-            <!-- <div class="dropdown py-2">
-                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    <img src="../imgs/face.jpg" alt="mdo" width="32" height="32" class="rounded-circle">
-                </a>
-                <ul class="dropdown-menu text-small">
-                    <li><a class="dropdown-item" href="#">我的主页</a></li>
-                    <li><a class="dropdown-item" href="#">设置</a></li>
-                    <li><a class="dropdown-item" href="#">修改密码</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="#">退出</a></li>
-                </ul>
-            </div> -->
-        </div>
-
-    </div>
-</nav>
-
-<!--Bootstrap 核心 JS 文件-->
 <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/message.min.js"></script>
+<script src="/js/jquery-3.6.3.min.js"></script>
+<script src="/js/jquery.cookie.min.js"></script>
+<script>
+
+    Qmsg.config({
+        showClose: false,
+        timeout: 1000
+    })
+
+    $("#login").on("click", function () {
+
+        var email = $("#loginEmail").val()
+        var ret = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+        if(!ret.test(email)){
+            Qmsg.error("邮箱格式不正确！")
+            return false
+        }
+
+        $.ajax({
+            url: "/user/login",
+            type: "post",
+            data: {
+                email: $("#loginEmail").val(),
+                pwd: $("#loginPassword").val()
+            },
+            success: function (result) {
+                if (result.code == 200) {
+                    Qmsg.success(result.msg, {
+                        timeout: 500,
+                        onClose: function () {
+                            location.reload()
+                        }
+                    })
+                } else {
+                    Qmsg.error(result.msg)
+                }
+            }
+        })
+    });
+
+
+    $("#registry").on("click", function () {
+
+        $.ajax({
+            url: "/user/create",
+            type: "POST",
+            data: {
+                email: $("#signupEmail").val(),
+                nickName: $("#nickName").val(),
+                Pwd: $("#signupPassword").val(),
+                repeatPwd: $("#checkPassword").val()
+            },
+            resultType: "JSON",
+            success: function (result) {
+                if (result.code == 200) {
+                    /*信息提示框*/
+                    Qmsg.success(result.msg)
+                    $("#toLogin").trigger("click");
+
+                } else {
+                    Qmsg.error(result.msg)
+                }
+
+
+            }
+
+        });
+
+    });
+
+
+</script>
 
 </body>
 </html>

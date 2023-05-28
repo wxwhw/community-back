@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.majiang.community.mapper.PostTypeMapper">
+    <sql id="PostType_Column_List">
+        id
+        ,name,description,scope,audit_state,ref_count,creator_id,is_delete,create_at,update_at
+    </sql>
+
+    <insert id="insertPostType" parameterType="com.majiang.community.pojo.PostType">
+        insert into t_article_type (name,scope,audit_state,description,ref_count,creator_id,is_delete,create_at,update_at)
+        values (#{name},#{scope},#{auditState},#{description},#{refCount},#{creatorId},#{isDelete},#{createAt},#{updateAt})
+    </insert>
+
+    <!--多条件模糊查询-->
+    <select id="selectPage" resultType="com.majiang.community.pojo.PostType">
+        select * from t_article_type
+        where
+        is_delete = 0
+        <if test="name != null and name != ''">
+            and name like concat('%', #{name}, '%')
+        </if>
+        <if test="scope != null and scope != ''">
+            and scope like concat('%', #{scope}, '%')
+        </if>
+        <if test="auditState != null and auditState != ''">
+            and audit_state = #{auditState}
+        </if>
+        limit
+        #{i},#{pageSize}
+    </select>
+
+    <select id="selectTotal" resultType="Long">
+        select count(*) from t_article_type
+        where
+        is_delete = 0
+        <if test="name != null and name != ''">
+            and name like concat('%', #{name}, '%')
+        </if>
+        <if test="scope != null and scope != ''">
+            and scope = #{scope}
+        </if>
+        <if test="auditState != null and auditState != ''">
+            and audit_state = #{auditState}
+        </if>
+    </select>
+
+</mapper>

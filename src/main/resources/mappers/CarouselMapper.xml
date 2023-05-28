@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.majiang.community.mapper.CarouselMappper">
+
+    <insert id="insertCarousel" parameterType="com.majiang.community.pojo.Carousel">
+        insert into t_carousel(audit_state,type,title,start_at,end_at,creator,is_delete,create_at,update_at,img_url,act_url) values (#{auditState},#{type},#{title},#{startAt},#{endAt},#{creator},#{isDelete},#{createAt},#{updateAt},#{imgUrl},#{actUrl})
+    </insert>
+
+    <select id="selectCarouselPage" resultType="com.majiang.community.pojo.Carousel">
+        select * from t_carousel where is_delete = 0
+        <if test="title !=''">
+            and title = #{title}
+        </if>
+        <if test="type != ''">
+            and type = #{type}
+        </if>
+        <if test="auditState != ''">
+            and audit_state = #{auditState}
+        </if>
+        limit #{offset},#{pageSize}
+    </select>
+
+    <select id="selectCarouselList" resultType="com.majiang.community.pojo.Carousel">
+        select * from t_carousel where is_delete = 0 and audit_state = 'PASS' and end_at > NOW() limit 10
+    </select>
+
+    <select id="selectTotal" resultType="Long">
+        select count(*) from t_carousel where is_delete = 0
+        <if test="title !=''">
+            and title = #{title}
+        </if>
+        <if test="type != ''">
+            and type = #{type}
+        </if>
+        <if test="auditState != ''">
+            and audit_state = #{auditState}
+        </if>
+    </select>
+</mapper>

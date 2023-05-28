@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.majiang.community.mapper.ArticleMapper">
+    <sql id="Article_Column_List">
+        id
+        ,title,user_id,markdown_content,html_content,views,approvals,comments,audit_state,type_id,cover_url,official,top,sort,marrow,collections,is_delete,create_at,update_at
+    </sql>
+
+    <insert id="insertArticle" parameterType="com.majiang.community.pojo.Article" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into t_posts (title, user_id, markdown_content, html_content, views, approvals, comments, audit_state,
+                             type_id, cover_url, official, top, sort, marrow, collections, is_delete, create_at,
+                             update_at)
+        values (#{title}, #{userId,jdbcType=BIGINT}, #{markdownContent}, #{htmlContent}, #{views}, #{approvals},
+                #{comments},
+                #{auditState},
+                #{typeId}, #{coverUrl}, #{official}, #{top}, #{sort}, #{marrow}, #{collections}, #{isDelete},
+                #{createAt}, #{updateAt})
+    </insert>
+
+    <insert id="insertTagInArticle" parameterType="com.majiang.community.pojo.Article">
+        insert into t_tag_posts_mapping (tag_id,article_id,is_delete,create_at,update_at)
+        values
+        <foreach collection="tagIds" separator="," item="tag">
+            (#{tag},#{id},#{isDelete},#{createAt},#{updateAt})
+        </foreach>
+    </insert>
+
+
+    <select id="selectTotal" resultType="Long">
+        select count(*) from t_posts
+        where
+        is_delete = 0
+        <if test="typeId != null">
+            and type_id = #{typeId}
+        </if>
+        <if test="auditState != null and auditState != ''">
+            and audit_state = #{auditState}
+        </if>
+        <if test="official != null">
+            and official = #{official}
+        </if>
+        <if test="top != null">
+            and top = #{top}
+        </if>
+        <if test="marrow != null">
+            and marrow = #{marrow}
+        </if>
+        <if test="authorId != null">
+            and user_id = #{authorId}
+        </if>
+        <if test="title != null and title != ''">
+            and title = #{title}
+        </if>
+
+    </select>
+
+    <sql id="renameColumn">
+        a
+        .
+        *
+        ,t.id t_id,t.name t_name,t.description t_description,t.group_name t_group_name,t.ref_count t_ref_count
+    </sql>
+    <!--    <select id="selectPage" resultMap="articleWithTags">-->
+    <!--        select-->
+    <!--        <include refid="renameColumn"/>-->
+    <!--        from t_posts a-->
+    <!--        INNER JOIN t_tag_posts_mapping atm ON a.id = atm.article_id-->
+    <!--        INNER JOIN t_tag t ON atm.tag_id = t.id-->
+    <!--        where a.id IN (-->
+    <!--        SELECT-->
+    <!--        id-->
+    <!--        FROM-->
+    <!--        (-->
+    <!--        SELECT-->
+    <!--        a.id-->
+    <!--        FROM-->
+    <!--        t_posts a-->
+    <!--        INNER JOIN t_tag_posts_mapping atm ON a.id = atm.article_id-->
+    <!--        INNER JOIN t_tag t ON atm.tag_id = t.id-->
+    <!--        group by-->
+    <!--        a.id-->
+    <!--        ) t1-->
+    <!--        ) and a.is_delete = 0-->
+    <!--        <if test="typeId != null">-->
+    <!--            and a.type_id = #{typeId}-->
+    <!--        </if>-->
+    <!--        <if test="auditState != null and auditState != ''">-->
+    <!--            and a.audit_state = #{auditState}-->
+    <!--        </if>-->
+    <!--        <if test="official != null">-->
+    <!--            and a.official = #{official}-->
+    <!--        </if>-->
+    <!--        <if test="top != null">-->
+    <!--            and a.top = #{top}-->
+    <!--        </if>-->
+    <!--        <if test="marrow != null">-->
+    <!--            and a.marrow = #{marrow}-->
+    <!--        </if>-->
+    <!--        <if test="authorId != null">-->
+    <!--            and a.user_id = #{authorId}-->
+    <!--        </if>-->
+    <!--        <if test="title != null and title != ''">-->
+    <!--            and a.title like concat('%', #{title}, '%')-->
+    <!--        </if>-->
+    <!--        order by marrow desc,create_at desc-->
+    <!--        <if test="i!=null and pageSize !=null">-->
+    <!--            limit-->
+    <!--            #{i},#{pageSize}-->
+    <!--        </if>-->
+
+    <!--    </select>-->
+
+    <select id="selectPage" resultMap="articleWithTags">
+        SELECT a.*
+        FROM t_posts a
+        where is_delete = 0
+        <if test="typeId != null">
+            and a.type_id = #{typeId}
+        </if>
+        <if test="auditState != null and auditState != ''">
+            and a.audit_state = #{auditState}
+        </if>
+        <if test="official != null">
+            and a.official = #{official}
+        </if>
+        <if test="top != null">
+            and a.top = #{top}
+        </if>
+        <if test="marrow != null">
+            and a.marrow = #{marrow}
+        </if>
+        <if test="authorId != null">
+            and a.user_id = #{authorId}
+        </if>
+        <if test="title != null and title != ''">
+            and a.title like concat('%', #{title}, '%')
+        </if>
+        ORDER BY a.top desc,a.marrow desc,a.create_at DESC
+        <if test="i!=null and pageSize !=null">
+            limit
+            #{i},#{pageSize}
+        </if>
+    </select>
+
+    <select id="selectTagsByArticleId" resultMap="tagMap">
+        select t.*
+        from t_tag_posts_mapping at
+                 JOIN t_tag t
+        ON at.tag_id = t.id
+        WHERE at.article_id = #{id}
+    </select>
+
+    <resultMap id="articleWithTags" type="com.majiang.community.dto.ArticleDTO">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="audit_state" property="auditState"></result>
+        <result column="html_content" property="htmlContent"></result>
+        <result column="markdown_content" property="markdownContent"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="views" property="views"></result>
+        <result column="approvals" property="approvals"></result>
+        <result column="comments" property="comments"></result>
+        <result column="type_id" property="typeId"></result>
+        <result column="cover_url" property="coverUrl"></result>
+        <result column="is_delete" property="isDelete"></result>
+        <result column="official" property="official"></result>
+        <result column="top" property="top"></result>
+        <result column="sort" property="sort"></result>
+        <result column="collections" property="collections"></result>
+        <result column="marrow" property="marrow"></result>
+        <result column="create_at" property="createAt"></result>
+        <result column="update_at" property="updateAt"></result>
+        <collection property="tagList" ofType="com.majiang.community.dto.TagDTO" select="selectTagsByArticleId"
+                    column="id">
+        </collection>
+    </resultMap>
+
+
+    <resultMap id="tagMap" type="com.majiang.community.dto.TagDTO">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="description" property="description"></result>
+        <result column="group_name" property="groupName"></result>
+        <result column="ref_count" property="refCount"></result>
+    </resultMap>
+
+    <select id="selectArticleById" resultMap="articleWithTags">
+        select a.*
+        from t_posts a
+        where a.is_delete = 0
+          and a.id = #{id}
+          and a.audit_state = 'PASS'
+    </select>
+
+    <select id="selectRelatedArticleList" resultType="com.majiang.community.dto.RelatedArticleDTO">
+        SELECT *
+        FROM t_posts
+        WHERE id IN (SELECT DISTINCT article_id
+                     FROM t_tag_posts_mapping
+                     WHERE tag_id IN
+                           (SELECT tag_id FROM t_tag_posts_mapping WHERE is_delete = 0 AND article_id = #{articleId})
+                       AND article_id
+            != #{articleId}
+            )
+          and create_at >= DATE_SUB(NOW()
+            , INTERVAL 30 DAY)
+
+        ORDER BY views desc
+            limit 5
+    </select>
+
+    <select id="selectSearchArticle" resultMap="articleWithTags">
+        SELECT a.*
+        FROM t_posts a
+        where is_delete = 0
+        <if test="searchText != null and searchText != ''">
+            and a.title like concat('%', #{searchText}, '%')
+            or a.markdown_content like concat('%', #{searchText}, '%')
+        </if>
+        ORDER BY a.create_at DESC
+        <if test="offset!=null and pageSize !=null">
+            limit
+            #{offset},#{pageSize}
+        </if>
+    </select>
+
+    <select id="selectArticleByTagId" resultMap="articleWithTags">
+        SELECT a.*
+        FROM t_posts a
+        where id in (select article_id from t_tag_posts_mapping where is_delete = 0 and tag_id = #{tagId})
+          and is_delete = 0
+          and audit_state = 'PASS'
+        order by top desc, marrow desc, create_at desc
+            limit #{offset}
+               , #{pageSize}
+
+    </select>
+
+    <select id="selectColArticle" resultMap="articleWithTags">
+        select a.*
+        from t_posts a
+        where id in
+              (select followed from t_user_follow where user_id = #{userId} and is_delete = 0 and follow_type = 'Article')
+          and is_delete = 0
+          and audit_state = 'PASS'
+        order by create_at desc
+            limit #{offset}
+            , #{pageSize}
+    </select>
+</mapper>
